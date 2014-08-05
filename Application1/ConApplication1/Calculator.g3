@@ -1,0 +1,39 @@
+﻿grammar Calculator;
+
+options {
+    language=CSharp3;
+}
+
+@lexer::namespace{ConApplication1}
+@parser::namespace{ConApplication1}
+
+@header {
+using System;
+}
+
+/*
+ * Parser Rules
+ */
+
+public addSubExpr returns [int value]
+	: a = multDivExpr {$value = a;}
+	( '+' b = multDivExpr { $value += b; }
+	| '-' b = multDivExpr { $value -= b; })*;
+
+//	: multDivExpr (( '+' | '-' )multDivExpr)*;
+
+multDivExpr returns [int value]
+	: a = INT {$value = Int32.Parse($a.text);}
+	( '*' b = INT {$value *= Int32.Parse($b.text);}
+	| '/' b = INT {$value /= Int32.Parse($b.text);});
+
+//	: INT (( '*' | '/' ) INT)*;
+
+
+/*
+ * Lexer Rules
+ */
+
+INT : '0' .. '9'+;
+WS  : (' '|'\t'|'\r'|'\n')+ {Skip();} ;
+
